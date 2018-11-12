@@ -1,26 +1,4 @@
-"""
-Neural Transfer Using PyTorch
-=============================
-
-
-**Author**: `Alexis Jacq <https://alexis-jacq.github.io>`_
-
-**Edited by**: `Winston Herring <https://github.com/winston6>`_
-
-Introduction
-------------
-
-This tutorial explains how to implement the `Neural-Style algorithm <https://arxiv.org/abs/1508.06576>`__
-developed by Leon A. Gatys, Alexander S. Ecker and Matthias Bethge.
-Neural-Style, or Neural-Transfer, allows you to take an image and
-reproduce it with a new artistic style. The algorithm takes three images,
-an input image, a content-image, and a style-image, and changes the input
-to resemble the content of the content-image and the artistic style of the style-image.
-
-
-.. figure:: /_static/img/neural-style/neuralstyle.png
-   :alt: content1
-"""
+from __future__ import print_function
 
 ######################################################################
 # Underlying Principle
@@ -69,7 +47,7 @@ The great list of TODOS
 
 # GIT CHECK!
 
-from __future__ import print_function
+
 
 import torch
 import torch.nn as nn
@@ -107,10 +85,23 @@ loader = transforms.Compose([
 
 unloader = transforms.ToPILImage()  # reconvert into PIL image
 
-def gaussian(input, mean=0, sttdev=0.05):
-    noise = sttdev * torch.randn(input.size()).type(torch.FloatTensor)
-    #input.data.new_empty(input.size()).normal_(mean,sttdev)
-    return noise
+def noisy2(img,var):
+    if(img.is_cuda):
+        img = img + var * torch.randn(img.size()).type(torch.cuda.FloatTensor)
+    else:
+        img = img + var*torch.randn(img.size()).type(torch.FloatTensor)
+    return img
+
+def gaussian(input, stddev, mean = 0):
+    if stddev > 1:
+        stddev = stddev / 255
+    if (input.is_cuda):
+        gauss_noise = input.data.new_empty(input.size()).normal_(mean, stddev)
+            #stddev * torch.randn(input.size()).type(torch.cuda.FloatTensor)
+    else:
+        gauss_noise = input.data.new_empty(input.size()).normal_(mean, stddev)#.type(torch.FloatTensor)
+    #
+    return gauss_noise#.to(device, torch.float)
 
 
 def image_loader(image_name):
@@ -120,14 +111,6 @@ def image_loader(image_name):
     return image.to(device, torch.float)
 
 
-
-
-
-
-
-
-
-
 def imshow(tensor, title=None):
     image = tensor.cpu().clone()  # we clone the tensor to not do changes on it
     image = image.squeeze(0)      # remove the fake batch dimension
@@ -135,14 +118,23 @@ def imshow(tensor, title=None):
     plt.imshow(image)
     if title is not None:
         plt.title(title)
-    plt.pause(0.001) # pause a bit so that plots are updated
+    plt.pause(3) # pause a bit so that plots are updated
 
+'''
+test_img_path = "/home/osherm/BSD/BSR/BSDS500/data/images/test/2018.jpg"
+test_img = image_loader(test_img_path)
+
+plt.figure()
+imshow(test_img)
+#imshow(test_img + gaussian(test_img,stddev =50))
+input ("wait...")
+'''
 
 
 
 class DataSetLoader(Dataset):
 
-    def __init__(self, root_dir, transform=None):
+    def __init__(self, root_dir, noise_stddev, transform=None):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -151,9 +143,10 @@ class DataSetLoader(Dataset):
         """
         self.root_dir = root_dir
         self.transform = transform
+        self.stddev = noise_stddev
 
         img_list = []
-        for root, dirs, files in (self.root_dir):
+        for (root_d, dirs, files) in os.walk(self.root_dir):
             for filename in files:
                 file_path = os.path.join(root, filename)
                 img_list.append(file_path)
@@ -161,58 +154,44 @@ class DataSetLoader(Dataset):
         self.img_list = img_list
 
     def __len__(self):
-        return len(glob.glob1(self.root_dir,"*.jpg"))
+        return len(self.img_list)
 
     def __getitem__(self, idx):
-        image = self.img_list[idx]
+        image = Image.open(image_name)
 
-
-
-        noise = gaussian(image)
-        sample = {'image': image, 'noise': noise}
-
-
-        if self.transform:
-            sample = self.transform(sample)
+        #if self.transform:
+        # tranform original image
+        image_tensor = self.transform(image).unsqueeze(0).to(device, torch.float)
+        noise = gaussian(image_tensor, stddev = self.stddev)
+        noised_image = image_tensor + noise
+        sample = {'image': image_tensor, 'noise': noise, 'noised_image': noised_image}
 
         return sample
 
     @staticmethod
-    def gaussian(input, mean=0, sttdev=0.05):
-        noise = sttdev * torch.randn(input.size()).type(torch.FloatTensor)
+    def get_gaussian_noise(input, stddev, mean = 0):
+        # Normalize stddev to range [0-1]
+        if stddev > 1:
+            stddev = stddev/255
+
+        if input.is_cuda:
+            gauss_noise = stddev * torch.randn(input.size()).type(torch.cuda.FloatTensor)
+        else:
+            gauss_noise = stddev * torch.randn(input.size()).type(torch.FloatTensor)
         # input.data.new_empty(input.size()).normal_(mean,sttdev)
-        return noise
+        return gauss_noise
 
 
 
+root = "/home/osherm/BSD/BSR/BSDS500/data/images/test/"#"/Users/Ben/Documents/university/Project\ A/Programs/Intro/images"
 
 
+bsd_dataloader= DataSetLoader(root, noise_stddev = 10, transform= loader)
 
-
-root = "/Users/Ben/Documents/university/Project\ A/Programs/Intro/images"
-
-
-
-
-butterfly = image_loader("./images/butterfly.jpg")
-
-
-
-
-
+sample_img = bsd_dataloader.__getitem__(2)
 
 plt.figure()
-imshow(butterfly, title='Butterfly')
-
-# plt.figure()
-noise = gaussian(butterfly)
-imshow(noise, title='noise')
-
-# plt.figure()
-imshow(butterfly + noise, title='butterfly + noise')
-
-input("Press Enter to continue...")
-
+imshow(sample_img['noised_image'])
 
 
 

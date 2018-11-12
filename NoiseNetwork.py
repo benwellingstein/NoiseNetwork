@@ -1,136 +1,109 @@
-from __future__ import print_function
-
-
-
-"""
-
-
-The great list of TODOS
-
-
-    open git - BEN
-    
-    data loader
-    
-    build network 
-        
-        loss layer
-        
-    training 
-
-    matlab running and refrencing 
-    
-"""
-
-
-
+from dataset import DnCnnDataset
+from models import DnCNN
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
+from torch.utils.data import DataLoader
+
 import torch.optim as optim
 
 from PIL import Image
 import matplotlib.pyplot as plt
 
 import torchvision.transforms as transforms
-import torchvision.models as models
-from torchvision import utils
-
-
-# for data loader
-import os
-from torch.utils.data import Dataset, DataLoader
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 
-def gaussian(input, stddev, mean = 0):
-    if stddev > 1:
-        stddev = stddev / 255
-    if (input.is_cuda):
-        gauss_noise = input.data.new_empty(input.size()).normal_(mean, stddev)
-            #stddev * torch.randn(input.size()).type(torch.cuda.FloatTensor)
-    else:
-        gauss_noise = input.data.new_empty(input.size()).normal_(mean, stddev)#.type(torch.FloatTensor)
-    #
-    return gauss_noise#.to(device, torch.float)
-
+unloader= transforms.ToPILImage()
 
 def imshow(tensor, title=None):
     image = tensor.cpu().clone()  # we clone the tensor to not do changes on it
-    image = image.squeeze(0)      # remove the fake batch dimension
+    image = image.squeeze(0)  # remove the fake batch dimension
     image = unloader(image)
     plt.imshow(image)
     if title is not None:
         plt.title(title)
-    plt.pause(3) # pause a bit so that plots are updated
+
+def subplot(images, titles, rows, cols):
+    '''
+
+    :param images: an array of tensors representing the images
+    :param rows: number of rows in the grid
+    :param cols: number of cols in the grid
+    :return:
+    '''
+    if len(images) != rows*cols:
+        raise("Error - number of images isn't equal to the number of sublots")
+
+    fig = plt.figure()
+    for i in range (1, cols*rows+1):
+        image = images[i-1].squeeze(0)
+        #image = torch.FloatTensor(1, 80, 80)
+        image = unloader(image)
+        title = titles[i-1]
+        fig.add_subplot(rows, columns, i)
+        plt.imshow(image)
+        plt.title(title)
+    plt.show()
 
 
-class DataSetLoader(Dataset):
-    def __init__(self, root_dir, noise_stddev, transform=None):
-        """
-        Args:
-            root_dir (string): Directory with all the images.
-            transform (callable, optional): Optional transform to be applied
-                on a sample.
-        """
-        self.root_dir = root_dir
-        self.transform = transform
-        self.stddev = noise_stddev
 
-        img_list = []
-        for (root_d, dirs, files) in os.walk(self.root_dir):
-            for filename in files:
-                file_path = os.path.join(root, filename)
-                img_list.append(file_path)
-
-        self.img_list = img_list
-
-    def __len__(self):
-        return len(self.img_list)
-
-    def __getitem__(self, idx):
-        image = Image.open(image_name)
-
-        #if self.transform:
-        # tranform original image
-        image_tensor = self.transform(image).unsqueeze(0).to(device, torch.float)
-        noise = gaussian(image_tensor, stddev = self.stddev)
-        noised_image = image_tensor + noise
-        sample = {'image': image_tensor, 'noise': noise, 'noised_image': noised_image}
-
-        return sample
-
-    @staticmethod
-    def get_gaussian_noise(input, stddev, mean = 0):
-        # Normalize stddev to range [0-1]
-        if stddev > 1:
-            stddev = stddev/255
-        if input.is_cuda:
-            gauss_noise = stddev * torch.randn(input.size()).type(torch.cuda.FloatTensor)
-        else:
-            gauss_noise = stddev * torch.randn(input.size()).type(torch.FloatTensor)
-        # input.data.new_empty(input.size()).normal_(mean,sttdev)
-        return gauss_noise
+trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
+noise_stddev = 50
+epochs_num = 2
 
 
-loader_transforms = transforms.Compose([
-      transforms.Grayscale(),
-      transforms.RandomCrop([80,80], padding=10),
-      transforms.ToTensor()])  # transform it into a torch tensor
-
-unloader = transforms.ToPILImage()  # reconvert into PIL image
-
-root = "/home/osherm/BSD/BSR/BSDS500/data/images/test/"
+use_cuda = torch.cuda.is_available()
+device = torch.device("cuda:0" if use_cuda else "cpu")
 
 
-bsd_dataloader= DataSetLoader(root, noise_stddev=10, transform=loader_transforms)
+training_set = DnCnnDataset(trainRootPath, noise_stddev)
+training_generator = DataLoader(DnCnnDataset, batch_size=4, shuffle=True)
 
-'''
-# Meant for testing dataloader
-sample_img = bsd_dataloader.__getitem__(2)
+DnCnn_net = DnCNN(channels=1, layers_num=10)
 
-plt.figure()
-imshow(sample_img['noised_image'])
-'''
+criterion = nn.MSELoss()
+
+# Move to GPU
+device_ids = [0]
+model = nn.DataParallel(DnCnn_net, device_ids=device_ids).cuda()
+
+optimizer = optim.SGD(DnCnn_net.parameters(), lr=0.0001, momentum=0.9)
+
+for epoch in range(1):
+    running_loss = 0.0
+
+    for i, data in enumerate(training_set,0):
+        image, noise, noised_image = data
+
+        optimizer.zero_grad()
+
+        outputs = model(noised_image)
+        loss = criterion(outputs, noise)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item()
+        if i%10 == 9:
+            print("[%d, %5d] loss: %.3f" % (epoch + 1, i+1, running_loss/10))
+            running_loss = 0.0
+
+print("Finished training")
+
+print("Start testing")
+testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/test"
+testLoader = DnCnnDataset(testRootPath, noise_stddev)
+
+for i, data in enumerate(testLoader, 0):
+    if i==0:
+        image, noise, noised_image = data
+
+        learned_noise = model(noised_image)
+        clean_image = noised_image - learned_noise
+
+        images_for_display = [image, noised_image, clean_image]
+        titles = ["Original image", "Noised image", "Clean image"]
+        plt.figure(i)
+        subplot(images_for_display, titles,1,3)
+    else:
+        break

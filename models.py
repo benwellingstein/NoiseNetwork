@@ -1,6 +1,3 @@
-# Remove later:
-# https://github.com/SaoYan/DnCNN-PyTorch/blob/master/models.py
-
 import torch.nn as nn
 import torch
 

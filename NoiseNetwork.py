@@ -32,16 +32,16 @@ def subplot(images, titles, rows, cols):
     :param cols: number of cols in the grid
     :return:
     '''
-    if len(images) != rows*cols:
+    if len(images) != rows*cols or len(images)!=len(titles):
         raise("Error - number of images isn't equal to the number of sublots")
 
     fig = plt.figure()
     for i in range (1, cols*rows+1):
-        image = images[i-1].squeeze(0)
+        image = images[i-1].cpu().squeeze(0)
         #image = torch.FloatTensor(1, 80, 80)
         image = unloader(image)
         title = titles[i-1]
-        fig.add_subplot(rows, columns, i)
+        fig.add_subplot(rows, cols, i)
         plt.imshow(image)
         plt.title(title)
     plt.show()
@@ -49,8 +49,8 @@ def subplot(images, titles, rows, cols):
 
 
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
-noise_stddev = 50
-epochs_num = 2
+noise_stddev = 5
+epochs_num = 10
 
 
 use_cuda = torch.cuda.is_available()
@@ -70,7 +70,7 @@ model = nn.DataParallel(DnCnn_net, device_ids=device_ids).cuda()
 
 optimizer = optim.SGD(DnCnn_net.parameters(), lr=0.0001, momentum=0.9)
 
-for epoch in range(1):
+for epoch in range(epochs_num):
     running_loss = 0.0
 
     for i, data in enumerate(training_set,0):
@@ -95,15 +95,14 @@ testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/test"
 testLoader = DnCnnDataset(testRootPath, noise_stddev)
 
 for i, data in enumerate(testLoader, 0):
-    if i==0:
-        image, noise, noised_image = data
+    image, noise, noised_image = data
 
-        learned_noise = model(noised_image)
-        clean_image = noised_image - learned_noise
+    learned_noise = model(noised_image)
+    clean_image = noised_image - learned_noise
 
-        images_for_display = [image, noised_image, clean_image]
-        titles = ["Original image", "Noised image", "Clean image"]
-        plt.figure(i)
-        subplot(images_for_display, titles,1,3)
-    else:
-        break
+    images_for_display = [image, noised_image, clean_image]
+    titles = ["Original image", "Noised image", "Clean image"]
+    plt.figure(i)
+    subplot(images_for_display, titles, 1, 3)
+
+    print("break")

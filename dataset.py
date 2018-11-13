@@ -27,7 +27,7 @@ def imshow(tensor, title=None):
 
 
 class DnCnnDataset(Dataset):
-    def __init__(self, root_dir, noise_stddev, training=True):
+    def __init__(self, root_dir, noise_stddev, training):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -35,10 +35,17 @@ class DnCnnDataset(Dataset):
                 on a sample.
         """
         self.root_dir = root_dir
-        self.transform = transforms.Compose([
-                            transforms.Grayscale(),
-                            transforms.RandomCrop([80, 80]),
-                            transforms.ToTensor()])  # transform it into a torch tensor
+        if training:
+            self.transform = transforms.Compose([
+                                transforms.Grayscale(),
+                                transforms.RandomCrop([80, 80]),
+                                transforms.ToTensor()])  # transform it into a torch tensor
+        else:
+            self.transform = transforms.Compose([
+                transforms.Grayscale(),
+                transforms.RandomCrop([200, 200]),
+                transforms.ToTensor()])  # transform it into a torch tensor
+
         self.stddev = noise_stddev
 
         img_list = []

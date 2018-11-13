@@ -35,7 +35,7 @@ def subplot(images, titles, rows, cols):
     if len(images) != rows*cols or len(images)!=len(titles):
         raise("Error - number of images isn't equal to the number of sublots")
 
-    fig = plt.figure()
+    #fig = plt.figure()
     for i in range (1, cols*rows+1):
         image = images[i-1].cpu().clone()#.squeeze(0)
         #image = torch.FloatTensor(1, 80, 80)
@@ -57,7 +57,7 @@ def save_models_params(params, file_path):
 # Main
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
 noise_stddev = 25
-epochs_num = 100
+epochs_num = 25
 batch_size = 4
 
 
@@ -65,8 +65,8 @@ use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
 
 
-training_set = DnCnnDataset(trainRootPath, noise_stddev)
-training_generator = DataLoader(training_set, batch_size=4, shuffle=True, num_workers=2)
+training_set = DnCnnDataset(trainRootPath, noise_stddev, training=True)
+training_generator = DataLoader(training_set, batch_size=4, shuffle=True, num_workers=4)
 
 DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
 #transfer to GPU - cuda/to.device
@@ -104,7 +104,7 @@ print("Finished training")
 
 print("Start testing")
 testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/val"
-test_set = DnCnnDataset(testRootPath, noise_stddev)
+test_set = DnCnnDataset(testRootPath, noise_stddev, training=False)
 test_generator = DataLoader(test_set, batch_size=4, num_workers=4)
 
 for i, data in enumerate(test_generator, 0):
@@ -121,5 +121,3 @@ for i, data in enumerate(test_generator, 0):
     titles = ["Original image", "Noised image", "Clean image"]
     plt.figure(i)
     subplot(images_for_display, titles, 1, 3)
-
-    print("break")

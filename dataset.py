@@ -40,7 +40,7 @@ class DnCnnDataset(Dataset):
         self.root_dir = root_dir
         self.transform = transforms.Compose([
                             transforms.Grayscale(),
-                            transforms.RandomCrop([80, 80], padding=10),  ### Do we need padding? Random crop doesn't always work well
+                            transforms.RandomCrop([80, 80]),
                             transforms.ToTensor()])  # transform it into a torch tensor
         self.stddev = noise_stddev
 

@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 import torchvision.transforms as transforms
 
-
+import pickle
 
 unloader= transforms.ToPILImage()
 
@@ -46,11 +46,16 @@ def subplot(images, titles, rows, cols):
         plt.title(title)
     plt.show()
 
+def save_models_params(params, file_path):
+    with open (file_path, "wb") as f:
+        return
 
 
+
+# Main
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
 noise_stddev = 5
-epochs_num = 10
+epochs_num = 10#10*60*60
 
 
 use_cuda = torch.cuda.is_available()
@@ -61,6 +66,7 @@ training_set = DnCnnDataset(trainRootPath, noise_stddev)
 training_generator = DataLoader(DnCnnDataset, batch_size=4, shuffle=True)
 
 DnCnn_net = DnCNN(channels=1, layers_num=10)
+#transfer to GPU - cuda/to.device
 
 criterion = nn.MSELoss()
 
@@ -68,7 +74,8 @@ criterion = nn.MSELoss()
 device_ids = [0]
 model = nn.DataParallel(DnCnn_net, device_ids=device_ids).cuda()
 
-optimizer = optim.SGD(DnCnn_net.parameters(), lr=0.0001, momentum=0.9)
+#optimizer = optim.SGD(DnCnn_net.parameters(), lr=0.00001, momentum=0.9)
+optimizer = optim.Adam()
 
 for epoch in range(epochs_num):
     running_loss = 0.0
@@ -79,7 +86,7 @@ for epoch in range(epochs_num):
         optimizer.zero_grad()
 
         outputs = model(noised_image)
-        loss = criterion(outputs, noise)
+        loss = criterion(outputs, image)
         loss.backward()
         optimizer.step()
 

@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a6880f61-6e60-47c3-9674-e3060d6ab9e8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/NoiseNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/NoiseNetwork.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -48,12 +50,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="4608" />
+          <entry key="py" value="4872" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="4608" />
+          <entry key="Python" value="4872" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -73,11 +75,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NoiseNetwork.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="102" column="58" selection-start-line="102" selection-start-column="47" selection-end-line="102" selection-end-column="58" />
+            <state relative-caret-position="368">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
-                <marker date="1542049407236" expanded="true" signature="619:1261" ph="..." />
+                <marker date="1542092843455" expanded="true" signature="632:1378" ph="..." />
+                <marker date="1542092843455" expanded="true" signature="1314:1371" ph="..." />
               </folding>
             </state>
           </provider>
@@ -86,28 +89,32 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file:///usr/local/lib/python3.5/dist-packages/torchvision/transforms/functional.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1560">
+            <state relative-caret-position="-960">
               <caret line="108" selection-start-line="108" selection-end-line="108" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="4" column="32" lean-forward="true" selection-start-line="4" selection-start-column="32" selection-end-line="4" selection-end-column="32" />
+            <state relative-caret-position="144">
+              <caret line="42" column="60" selection-start-line="42" selection-start-column="60" selection-end-line="42" selection-end-column="60" />
+              <folding>
+                <element signature="e#0#37#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="156">
+              <caret line="14" column="47" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="47" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
-                <marker date="1542050016843" expanded="true" signature="60:65" ph="..." />
+                <marker date="1542092386323" expanded="true" signature="60:65" ph="..." />
               </folding>
             </state>
           </provider>
@@ -137,9 +144,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/modules.py" />
-        <option value="$PROJECT_DIR$/dataset.py" />
-        <option value="$PROJECT_DIR$/NoiseNetwork.py" />
         <option value="$PROJECT_DIR$/models.py" />
+        <option value="$PROJECT_DIR$/NoiseNetwork.py" />
+        <option value="$PROJECT_DIR$/dataset.py" />
       </list>
     </option>
   </component>
@@ -255,8 +262,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/NoiseNetwork.py</url>
-          <line>107</line>
+          <line>114</line>
           <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/NoiseNetwork.py</url>
+          <line>16</line>
+          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -309,35 +321,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/NoiseNetwork.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="102" column="58" selection-start-line="102" selection-start-column="47" selection-end-line="102" selection-end-column="58" />
+        <state relative-caret-position="368">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <marker date="1542049407236" expanded="true" signature="619:1261" ph="..." />
+            <marker date="1542092843455" expanded="true" signature="632:1378" ph="..." />
+            <marker date="1542092843455" expanded="true" signature="1314:1371" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="14" column="47" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+            <marker date="1542092386323" expanded="true" signature="60:65" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/local/lib/python3.5/dist-packages/torchvision/transforms/functional.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1560">
+        <state relative-caret-position="-960">
           <caret line="108" selection-start-line="108" selection-end-line="108" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="4" column="32" lean-forward="true" selection-start-line="4" selection-start-column="32" selection-end-line="4" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="144">
+          <caret line="42" column="60" selection-start-line="42" selection-start-column="60" selection-end-line="42" selection-end-column="60" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
-            <marker date="1542050016843" expanded="true" signature="60:65" ph="..." />
+            <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>

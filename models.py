@@ -27,4 +27,5 @@ class DnCNN(nn.Module):
 
     def forward(self, input):
         out = self.dncnn(input)
+        out += input
         return out

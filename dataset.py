@@ -2,8 +2,6 @@ from __future__ import print_function
 
 import torch
 import torch.nn as nn
-#import torch.nn.functional as F
-#import torch.optim as optim
 
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -16,11 +14,10 @@ from torchvision import utils
 import os
 from torch.utils.data import Dataset, DataLoader
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
+unloader= transforms.ToPILImage()
 def imshow(tensor, title=None):
-    image = tensor.cpu().clone()  # we clone the tensor to not do changes on it
+    image = tensor.cpu().clone().detach()  # we clone the tensor to not do changes on it
     image = image.squeeze(0)  # remove the fake batch dimension
     image = unloader(image)
     plt.imshow(image)
@@ -56,11 +53,7 @@ class DnCnnDataset(Dataset):
     def get_gaussian_noise(input, stddev, mean=0):
         # Normalize stddev to range [0-1]
         stddev = stddev / 255
-        if input.is_cuda:
-            gauss_noise = stddev * torch.randn(input.size()).type(torch.cuda.FloatTensor)
-        else:
-            gauss_noise = stddev * torch.randn(input.size()).type(torch.FloatTensor)
-        # input.data.new_empty(input.size()).normal_(mean,sttdev)
+        gauss_noise = stddev * torch.randn(input.size()).type(torch.FloatTensor)
         return gauss_noise
 
     def __len__(self):
@@ -72,27 +65,7 @@ class DnCnnDataset(Dataset):
 
         # if self.transform:
         # tranform original image
-        image_tensor = self.transform(image).unsqueeze(0).to(device, torch.float)
+        image_tensor = self.transform(image).squeeze(0)#.unsqueeze(0)
         noise = DnCnnDataset.get_gaussian_noise(image_tensor, stddev=self.stddev)
         noised_image = image_tensor + noise
         return image_tensor, noise, noised_image
-        #sample = {'image': image_tensor, 'noise': noise, 'noised_image': noised_image}
-
-        #return sample
-
-
-
-
-unloader = transforms.ToPILImage()  # reconvert into PIL image
-
-#root = "/home/osherm/BSD/BSR/BSDS500/data/images/test/"
-
-#bsd_dataloader = DataSetLoader(root, noise_stddev=10, transform=loader_transforms)
-
-'''
-# Meant for testing dataloader
-sample_img = bsd_dataloader.__getitem__(2)
-
-plt.figure()
-imshow(sample_img['noised_image'])
-'''

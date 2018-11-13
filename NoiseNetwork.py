@@ -17,7 +17,7 @@ import pickle
 unloader= transforms.ToPILImage()
 
 def imshow(tensor, title=None):
-    image = tensor.cpu().clone()  # we clone the tensor to not do changes on it
+    image = tensor.cpu().clone()  # we clone the tensor to not do changes on it - add .detach()
     image = image.squeeze(0)  # remove the fake batch dimension
     image = unloader(image)
     plt.imshow(image)
@@ -37,7 +37,7 @@ def subplot(images, titles, rows, cols):
 
     fig = plt.figure()
     for i in range (1, cols*rows+1):
-        image = images[i-1].cpu().squeeze(0)
+        image = images[i-1].cpu().clone()#.squeeze(0)
         #image = torch.FloatTensor(1, 80, 80)
         image = unloader(image)
         title = titles[i-1]
@@ -46,16 +46,19 @@ def subplot(images, titles, rows, cols):
         plt.title(title)
     plt.show()
 
+
 def save_models_params(params, file_path):
     with open (file_path, "wb") as f:
-        return
+        pickle.dump(params,f)
+        print("Parameters were saved")
 
 
 
 # Main
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
-noise_stddev = 5
-epochs_num = 10#10*60*60
+noise_stddev = 25
+epochs_num = 100
+batch_size = 4
 
 
 use_cuda = torch.cuda.is_available()
@@ -63,30 +66,32 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 
 
 training_set = DnCnnDataset(trainRootPath, noise_stddev)
-training_generator = DataLoader(DnCnnDataset, batch_size=4, shuffle=True)
+training_generator = DataLoader(training_set, batch_size=4, shuffle=True, num_workers=2)
 
-DnCnn_net = DnCNN(channels=1, layers_num=10)
+DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
 #transfer to GPU - cuda/to.device
 
 criterion = nn.MSELoss()
 
 # Move to GPU
-device_ids = [0]
-model = nn.DataParallel(DnCnn_net, device_ids=device_ids).cuda()
+model = DnCnn_net.to(device)
 
 #optimizer = optim.SGD(DnCnn_net.parameters(), lr=0.00001, momentum=0.9)
-optimizer = optim.Adam()
+optimizer = optim.Adam(model.parameters())
 
 for epoch in range(epochs_num):
     running_loss = 0.0
 
-    for i, data in enumerate(training_set,0):
+    for i, data in enumerate(training_generator):
         image, noise, noised_image = data
+
+        image, noise, noised_image = image.to(device).unsqueeze(0),\
+                                     noise.to(device).unsqueeze(0),noised_image.unsqueeze(0).to(device)
 
         optimizer.zero_grad()
 
         outputs = model(noised_image)
-        loss = criterion(outputs, image)
+        loss = criterion(outputs,noise) #criterion(outputs, image)
         loss.backward()
         optimizer.step()
 
@@ -98,16 +103,21 @@ for epoch in range(epochs_num):
 print("Finished training")
 
 print("Start testing")
-testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/test"
-testLoader = DnCnnDataset(testRootPath, noise_stddev)
+testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/val"
+test_set = DnCnnDataset(testRootPath, noise_stddev)
+test_generator = DataLoader(test_set, batch_size=4, num_workers=4)
 
-for i, data in enumerate(testLoader, 0):
+for i, data in enumerate(test_generator, 0):
     image, noise, noised_image = data
 
+    image, noise, noised_image = image.to(device).unsqueeze(0), \
+                                 noise.to(device).unsqueeze(0), noised_image.unsqueeze(0).to(device)
     learned_noise = model(noised_image)
-    clean_image = noised_image - learned_noise
+    clean_image = noised_image[:,0,:,:] - learned_noise[:,0,:,:]
 
-    images_for_display = [image, noised_image, clean_image]
+    #clean_image = model(noised_image)[:,0,:,:]
+
+    images_for_display = [image[:,0,:,:], noised_image[:,0,:,:], clean_image]
     titles = ["Original image", "Noised image", "Clean image"]
     plt.figure(i)
     subplot(images_for_display, titles, 1, 3)

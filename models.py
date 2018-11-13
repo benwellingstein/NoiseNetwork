@@ -20,12 +20,13 @@ class DnCNN(nn.Module):
                                     kernel_size=kernel_size, padding=padding, bias=False))
             layers.append(nn.BatchNorm2d(features_depth))
             layers.append(nn.ReLU(inplace=True))
+
         # Last layer
         layers.append(nn.Conv2d(in_channels=features_depth, out_channels=channels,
                                 kernel_size=kernel_size, padding=padding, bias=False))
         self.dncnn = nn.Sequential(*layers)
 
     def forward(self, input):
-        out = self.dncnn(input)
-        out += input
+        out = self.dncnn(input) # learning happens here
+        #out += input # this is just the return value
         return out

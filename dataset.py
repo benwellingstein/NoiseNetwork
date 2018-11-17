@@ -27,7 +27,7 @@ def imshow(tensor, title=None):
 
 
 class DnCnnDataset(Dataset):
-    def __init__(self, root_dir, noise_stddev, training):
+    def __init__(self, root_dir, noise_stddev, training=True):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -37,13 +37,17 @@ class DnCnnDataset(Dataset):
         self.root_dir = root_dir
         if training:
             self.transform = transforms.Compose([
-                                transforms.Grayscale(),
-                                transforms.RandomCrop([80, 80]),
-                                transforms.ToTensor()])  # transform it into a torch tensor
+                transforms.Grayscale(),
+                #transforms.RandomRotation(180),
+                transforms.RandomCrop([80, 80]),
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomVerticalFlip(),
+                transforms.ToTensor()])  # transform it into a torch tensor
+
         else:
             self.transform = transforms.Compose([
                 transforms.Grayscale(),
-                transforms.RandomCrop([200, 200]),
+                transforms.RandomCrop([80, 80]),
                 transforms.ToTensor()])  # transform it into a torch tensor
 
         self.stddev = noise_stddev
@@ -73,6 +77,7 @@ class DnCnnDataset(Dataset):
         # if self.transform:
         # tranform original image
         image_tensor = self.transform(image).squeeze(0)#.unsqueeze(0)
+        #imshow(image_tensor)
         noise = DnCnnDataset.get_gaussian_noise(image_tensor, stddev=self.stddev)
         noised_image = image_tensor + noise
         return image_tensor, noise, noised_image

@@ -17,7 +17,7 @@ import pickle
 unloader= transforms.ToPILImage()
 
 def imshow(tensor, title=None):
-    image = tensor.cpu().clone()  # we clone the tensor to not do changes on it - add .detach()
+    image = tensor.cpu().clone().detach()  # we clone the tensor to not do changes on it - add .detach()
     image = image.squeeze(0)  # remove the fake batch dimension
     image = unloader(image)
     plt.imshow(image)
@@ -35,7 +35,7 @@ def subplot(images, titles, rows, cols):
     if len(images) != rows*cols or len(images)!=len(titles):
         raise("Error - number of images isn't equal to the number of sublots")
 
-    #fig = plt.figure()
+    fig = plt.figure()
     for i in range (1, cols*rows+1):
         image = images[i-1].cpu().clone()#.squeeze(0)
         #image = torch.FloatTensor(1, 80, 80)
@@ -47,17 +47,22 @@ def subplot(images, titles, rows, cols):
     plt.show()
 
 
-def save_models_params(params, file_path):
-    with open (file_path, "wb") as f:
-        pickle.dump(params,f)
-        print("Parameters were saved")
+def save_model(model, file_path):
+    torch.save({
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': loss}
+        , file_path)
 
 
 
 # Main
+saveModelPath = "/home/osherm/PycharmProjects/NoiseNetwork/model.pth"
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
+
 noise_stddev = 25
-epochs_num = 25
+epochs_num = 2000
 batch_size = 4
 
 
@@ -66,7 +71,7 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 
 
 training_set = DnCnnDataset(trainRootPath, noise_stddev, training=True)
-training_generator = DataLoader(training_set, batch_size=4, shuffle=True, num_workers=4)
+training_generator = DataLoader(training_set, batch_size=4, shuffle=True, num_workers=2)
 
 DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
 #transfer to GPU - cuda/to.device
@@ -76,11 +81,11 @@ criterion = nn.MSELoss()
 # Move to GPU
 model = DnCnn_net.to(device)
 
-#optimizer = optim.SGD(DnCnn_net.parameters(), lr=0.00001, momentum=0.9)
-optimizer = optim.Adam(model.parameters())
-
+optimizer = optim.Adam(model.parameters(), lr=10e-3)
+optim_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [int(0.1*epochs_num), int(0.9*epochs_num)], gamma=0.1)
 for epoch in range(epochs_num):
     running_loss = 0.0
+    optim_scheduler.step()
 
     for i, data in enumerate(training_generator):
         image, noise, noised_image = data
@@ -91,8 +96,9 @@ for epoch in range(epochs_num):
         optimizer.zero_grad()
 
         outputs = model(noised_image)
-        loss = criterion(outputs,noise) #criterion(outputs, image)
+        loss = criterion(outputs,image)
         loss.backward()
+
         optimizer.step()
 
         running_loss += loss.item()
@@ -100,7 +106,12 @@ for epoch in range(epochs_num):
             print("[%d, %5d] loss: %.3f" % (epoch + 1, i+1, running_loss/10))
             running_loss = 0.0
 
+    if epoch%100==99:
+        save_model(model, saveModelPath)
+
 print("Finished training")
+
+
 
 print("Start testing")
 testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/val"
@@ -112,10 +123,10 @@ for i, data in enumerate(test_generator, 0):
 
     image, noise, noised_image = image.to(device).unsqueeze(0), \
                                  noise.to(device).unsqueeze(0), noised_image.unsqueeze(0).to(device)
-    learned_noise = model(noised_image)
-    clean_image = noised_image[:,0,:,:] - learned_noise[:,0,:,:]
+    #learned_noise = model(noised_image)
+    #clean_image = noised_image[:,0,:,:] - learned_noise[:,0,:,:]
 
-    #clean_image = model(noised_image)[:,0,:,:]
+    clean_image = model(noised_image)[:,0,:,:]
 
     images_for_display = [image[:,0,:,:], noised_image[:,0,:,:], clean_image]
     titles = ["Original image", "Noised image", "Clean image"]

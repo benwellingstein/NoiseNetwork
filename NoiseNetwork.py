@@ -2,6 +2,7 @@ from dataset import DnCnnDataset
 from models import DnCNN
 import torch
 import torch.nn as nn
+import skimage
 
 from torch.utils.data import DataLoader
 
@@ -62,8 +63,8 @@ saveModelPath = "/home/osherm/PycharmProjects/NoiseNetwork/model.pth"
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
 
 noise_stddev = 25
-epochs_num = 2000
-batch_size = 4
+epochs_num = 5
+batch_size = 32
 
 
 use_cuda = torch.cuda.is_available()
@@ -71,7 +72,7 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 
 
 training_set = DnCnnDataset(trainRootPath, noise_stddev, training=True)
-training_generator = DataLoader(training_set, batch_size=4, shuffle=True, num_workers=2)
+training_generator = DataLoader(training_set, batch_size=batch_size, shuffle=True, num_workers=4)
 
 DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
 #transfer to GPU - cuda/to.device
@@ -83,6 +84,7 @@ model = DnCnn_net.to(device)
 
 optimizer = optim.Adam(model.parameters(), lr=10e-3)
 optim_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [int(0.1*epochs_num), int(0.9*epochs_num)], gamma=0.1)
+
 for epoch in range(epochs_num):
     running_loss = 0.0
     optim_scheduler.step()

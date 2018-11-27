@@ -2,7 +2,7 @@ from dataset import DnCnnDataset
 from models import DnCNN
 import torch
 import torch.nn as nn
-import skimage
+from skimage import measure
 
 from torch.utils.data import DataLoader
 
@@ -61,6 +61,7 @@ def save_model(model, file_path):
 # Main
 saveModelPath = "/home/osherm/PycharmProjects/NoiseNetwork/model.pth"
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
+evalSetPath = "/home/osherm/PycharmProjects/NoiseNetwork/test/BSD68/"
 
 noise_stddev = 25
 epochs_num = 5
@@ -73,6 +74,12 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 
 training_set = DnCnnDataset(trainRootPath, noise_stddev, training=True)
 training_generator = DataLoader(training_set, batch_size=batch_size, shuffle=True, num_workers=4)
+
+#Use eval set along the training to calculate PSNR and verify we're "on the right path"
+eval_set = DnCnnDataset(evalSetPath, noise_stddev, training=False)
+#Make sure transforming BSD68 images (alrady in grayscale) doesn't screw things up
+eval_set_generator = DataLoader(eval_set, batch_size=1, shuffle=True, num_workers=1)
+
 
 DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
 #transfer to GPU - cuda/to.device
@@ -111,8 +118,22 @@ for epoch in range(epochs_num):
     if epoch%100==99:
         save_model(model, saveModelPath)
 
+        # Sanity check - calculate PSNR
+        eval_img, _, eval_noised_img = eval_set_generator()
+        eval_img, eval_noised_img = eval_img.to(device), eval_noised_img.to(device)
+        cleaned_eval_img = model(eval_noised_img)
+        psnr_val = measure.compare_psnr(eval_img,cleaned_eval_img)
+        print ("psnr value for epoch {epoch} is {psnr_val}") #%d is %.3f" #% (epoch, psnr_val))
+
+
 print("Finished training")
 
+# TODO : test loading model state
+checkpoint = torch.load(saveModelPath)
+args.start_epoch = checkpoint['epoch']
+best_prec1 = checkpoint['best_prec1']
+model.load_state_dict(checkpoint['state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer'])
 
 
 print("Start testing")

@@ -80,4 +80,5 @@ class DnCnnDataset(Dataset):
         #imshow(image_tensor)
         noise = DnCnnDataset.get_gaussian_noise(image_tensor, stddev=self.stddev)
         noised_image = image_tensor + noise
+        noised_image_clipped = torch.clamp(noised_image,-1,1)
         return image_tensor, noise, noised_image

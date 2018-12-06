@@ -55,7 +55,7 @@ class DnCnnDataset(Dataset):
         img_list = []
         for (root_d, dirs, files) in os.walk(self.root_dir):
             for filename in files:
-                if filename.endswith(".jpg"):
+                if (filename.endswith(".jpg") or filename.endswith(".png")):
                     file_path = os.path.join(root_d, filename)
                     img_list.append(file_path)
         self.img_list = img_list

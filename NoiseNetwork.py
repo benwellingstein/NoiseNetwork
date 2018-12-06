@@ -76,7 +76,7 @@ training_set = DnCnnDataset(trainRootPath, noise_stddev, training=True)
 training_generator = DataLoader(training_set, batch_size=batch_size, shuffle=True, num_workers=4,drop_last=True)
 
 eval_set = DnCnnDataset(evalSetPath, noise_stddev, training=False)
-eval_set_generator = DataLoader(eval_set,batch_size=1, shuffle=1, num_workers=1)
+eval_set_generator = DataLoader(eval_set,batch_size=batch_size, shuffle=1, num_workers=5)
 
 
 DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
@@ -116,14 +116,17 @@ for epoch in range(epochs_num):
             print("[%d, %5d] loss: %.3f" % (epoch + 1, i+1, running_loss/10))
             running_loss = 0.0
 
-    if epoch%5==100:
+    if epoch%5==1:
         save_model(model, saveModelPath)
         # Sanity check - calculate PSNR
-        eval_img, _, eval_noised_img = eval_set_generator()
-        eval_img, eval_noised_img = eval_img.to(device), eval_noised_img.to(device)
-        cleaned_eval_img = model(eval_noised_img)
-        psnr_val = measure.compare_psnr(eval_img, cleaned_eval_img)
-        print("psnr value for epoch {epoch} is {psnr_val}")  # %d is %.3f" #% (epoch, psnr_val))
+        # TODO: display/save images
+        # TODO: log psnr values along iterations
+        for j, eval_data in enumerate(eval_set_generator):
+            eval_img, _, eval_noised_img = eval_data
+            eval_img, eval_noised_img = eval_img.to(device).unsqueeze(0), eval_noised_img.to(device).unsqueeze(0)
+            cleaned_eval_img = model(eval_noised_img)
+            psnr_val = measure.compare_psnr(eval_img, cleaned_eval_img)
+            print("psnr value for epoch {epoch} is {psnr_val}")  # %d is %.3f" #% (epoch, psnr_val))
 
 print("Finished training")
 

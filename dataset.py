@@ -18,7 +18,7 @@ from torch.utils.data import Dataset, DataLoader
 unloader= transforms.ToPILImage()
 def imshow(tensor, title=None):
     image = tensor.cpu().clone().detach()  # we clone the tensor to not do changes on it
-    image = image.squeeze(0)  # remove the fake batch dimension
+    #image = image.squeeze(0)  # remove the fake batch dimension
     image = unloader(image)
     plt.imshow(image)
     if title is not None:
@@ -77,7 +77,9 @@ class DnCnnDataset(Dataset):
         # if self.transform:
         # tranform original image
         image_tensor = self.transform(image).squeeze(0)#.unsqueeze(0)
-        #imshow(image_tensor)
         noise = DnCnnDataset.get_gaussian_noise(image_tensor, stddev=self.stddev)
         noised_image = image_tensor + noise
-        return image_tensor, noise, noised_image
+        #noised_image_tensor = noised_image.unsqueeze(0)
+        noised_img_clipped = torch.clamp(noised_image,0,1)
+        #imshow(noised_img_clipped.unsqueeze(0))
+        return image_tensor, noise, noised_img_clipped

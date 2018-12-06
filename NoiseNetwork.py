@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 
 from torch.utils.data import DataLoader
+import torchvision.utils
 
 import torch.optim as optim
 
@@ -14,6 +15,7 @@ import torchvision.transforms as transforms
 
 import pickle
 from skimage import measure
+import numpy as np
 
 unloader= transforms.ToPILImage()
 
@@ -62,17 +64,19 @@ def save_model(model, file_path):
 saveModelPath = "/home/osherm/PycharmProjects/NoiseNetwork/model.pth"
 trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
 evalSetPath = "/home/osherm/PycharmProjects/NoiseNetwork/test/BSD68/"
+trainingEvalPath = "/home/osherm/PycharmProjects/NoiseNetwork/trainingEvals/"
 
 noise_stddev = 25
-epochs_num = 1000
-batch_size = 64
+epochs_num = 10
+batch_size = 32
+lr = 10e-2
 
 log = open('log.txt', 'a') 
 
 log.write("--------------------------------------------------------------")
 log.write("Starting new network")
-log.write("Using images from {evalSetPath}")
-log.write("Number of Epochs: {epochs_num}, Batch size: {batch_size}")
+log.write("Using images from {}".format(evalSetPath))
+log.write("Number of Epochs: {}, Batch size: {}".format(epochs_num, batch_size))
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
@@ -93,7 +97,7 @@ criterion = nn.MSELoss()
 # Move to GPU
 model = DnCnn_net.to(device)
 
-optimizer = optim.Adam(model.parameters(), lr=10e-2)
+optimizer = optim.Adam(model.parameters(), lr=lr)
 optim_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [int(0.1*epochs_num), int(0.9*epochs_num)], gamma=0.1)
 
 
@@ -110,21 +114,18 @@ for epoch in range(epochs_num):
 
         optimizer.zero_grad()
 
-
-
         outputs = model(noised_image)
         loss = criterion(outputs,image)
         loss.backward()
 
         optimizer.step()
 
-
         running_loss += loss.item()
         if i%10 == 9:
             print("[%d, %5d] loss: %.3f" % (epoch + 1, i+1, running_loss/10))
             running_loss = 0.0
 
-    if epoch%10==9:
+    if epoch%10 == 9:
         save_model(model, saveModelPath)
         # Sanity check - calculate PSNR
         # TODO: display/save images
@@ -145,31 +146,36 @@ for epoch in range(epochs_num):
                 eval_cleaned_img = cleaned_eval_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
                 psnr_val = measure.compare_psnr(eval_img, eval_cleaned_img)
                 eval_psnr_sum += psnr_val
+                if (j==0 and sample_ind==0):
+                    # Save first image to display progress during training
+                    I8 = (((eval_cleaned_img - eval_cleaned_img.min()) / (eval_cleaned_img.max() - eval_cleaned_img.min())) * 255.9).astype(np.uint8)
+                    img = Image.fromarray(I8)
+                    img.save(trainingEvalPath+"img0.png")
+
 
         avg_psnr = eval_psnr_sum / eval_set.__len__()
         psnr_values.append(avg_psnr)
         # average psnr sum over batch size
-        log.write("psnr value for epoch {epoch} is {avg_psnr}")
-        #print("average psnr is " + str(avg_psnr))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ))
-
-        # print("psnr value for epoch {epoch} is {avg_batch_psnr}")  # %d is %.3f" #% (epoch, psnr_val))
-
+        log.write("psnr value for epoch {} is {}".format(epoch, avg_psnr))
+        print("average psnr is {}".format(psnr_values))
 
 print("Finished training")
+save_model(model, saveModelPath)
+log.close()
 
 
 # TODO : test loading model state
 checkpoint = torch.load(saveModelPath)
-start_epoch = checkpoint['epoch']
-best_prec1 = checkpoint['best_prec1']
-model.load_state_dict(checkpoint['state_dict'])
-optimizer.load_state_dict(checkpoint['optimizer'])
+#start_epoch = checkpoint['epoch']
+#best_prec1 = checkpoint['best_prec1']
+model.load_state_dict(checkpoint['model_state_dict'])
+#optimizer.load_state_dict(checkpoint['optimizer'])
 
 
 print("Start testing")
 testRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/val"
 test_set = DnCnnDataset(testRootPath, noise_stddev, training=False)
-test_generator = DataLoader(test_set, batch_size=4, num_workers=4)
+test_generator = DataLoader(test_set, batch_size=batch_size, num_workers=4,drop_last=True)
 
 for i, data in enumerate(test_generator, 0):
     image, noise, noised_image = data
@@ -183,5 +189,5 @@ for i, data in enumerate(test_generator, 0):
 
     images_for_display = [image[:,0,:,:], noised_image[:,0,:,:], clean_image]
     titles = ["Original image", "Noised image", "Clean image"]
-    plt.figure(i)
+    #plt.figure(i)
     subplot(images_for_display, titles, 1, 3)

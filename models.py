@@ -28,5 +28,5 @@ class DnCNN(nn.Module):
 
     def forward(self, input):
         out = self.dncnn(input) # learning happens here
-        out += input # this is just the return value
+        #out += input # this is just the return value
         return out

@@ -67,9 +67,9 @@ evalSetPath = "/home/osherm/PycharmProjects/NoiseNetwork/test/BSD68/"
 trainingEvalPath = "/home/osherm/PycharmProjects/NoiseNetwork/trainingEvals/"
 
 noise_stddev = 25
-epochs_num = 10
-batch_size = 32
-lr = 10e-2
+epochs_num = 50
+batch_size = 4
+lr = 10e-4
 
 log = open('log.txt', 'a') 
 
@@ -115,7 +115,7 @@ for epoch in range(epochs_num):
         optimizer.zero_grad()
 
         outputs = model(noised_image)
-        loss = criterion(outputs,image)
+        loss = criterion(outputs,noise)
         loss.backward()
 
         optimizer.step()
@@ -137,27 +137,28 @@ for epoch in range(epochs_num):
         for j, eval_data in enumerate(eval_set_generator):
             eval_img_batch, _, eval_noised_img_batch = eval_data
             eval_img_batch, eval_noised_img_batch = eval_img_batch.to(device).unsqueeze(0), eval_noised_img_batch.to(device).unsqueeze(0)
-            cleaned_eval_img_batch = model(eval_noised_img_batch)
+            eval_noise_batch = model(eval_noised_img_batch)
 
             #Calculate average PSNR for the batch
             batch_psnr_sum = 0.0
             for sample_ind in range(batch_size):
-                eval_img = eval_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
-                eval_cleaned_img = cleaned_eval_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
-                psnr_val = measure.compare_psnr(eval_img, eval_cleaned_img)
+                eval_gt_img = eval_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
+                eval_noised_img = eval_noised_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
+                eval_noise = eval_noise_batch.detach().cpu().numpy()[0,sample_ind,:,:]
+                eval_cleaned_img = np.clip(eval_noised_img-eval_noise, 0, 1)
+                psnr_val = measure.compare_psnr(eval_gt_img, eval_cleaned_img)
                 eval_psnr_sum += psnr_val
                 if (j==0 and sample_ind==0):
                     # Save first image to display progress during training
                     I8 = (((eval_cleaned_img - eval_cleaned_img.min()) / (eval_cleaned_img.max() - eval_cleaned_img.min())) * 255.9).astype(np.uint8)
                     img = Image.fromarray(I8)
-                    img.save(trainingEvalPath+"img0.png")
+                    img.save(trainingEvalPath+"img0_epoch"+str(epoch)+".png")
 
-
-        avg_psnr = eval_psnr_sum / eval_set.__len__()
-        psnr_values.append(avg_psnr)
-        # average psnr sum over batch size
-        log.write("psnr value for epoch {} is {}".format(epoch, avg_psnr))
-        print("average psnr is {}".format(psnr_values))
+            avg_psnr = eval_psnr_sum / eval_set.__len__()
+            psnr_values.append(avg_psnr)
+            # average psnr sum over batch size
+            log.write("psnr value for epoch {} is {}".format(epoch, avg_psnr))
+            print("average psnr is {}".format(psnr_values))
 
 print("Finished training")
 save_model(model, saveModelPath)
@@ -182,10 +183,10 @@ for i, data in enumerate(test_generator, 0):
 
     image, noise, noised_image = image.to(device).unsqueeze(0), \
                                  noise.to(device).unsqueeze(0), noised_image.unsqueeze(0).to(device)
-    #learned_noise = model(noised_image)
-    #clean_image = noised_image[:,0,:,:] - learned_noise[:,0,:,:]
+    learned_noise = model(noised_image)
+    clean_image = torch.clamp(noised_image[:,0,:,:] - learned_noise[:,0,:,:], 0, 1)
 
-    clean_image = model(noised_image)[:,0,:,:]
+    #clean_image = model(noised_image)[:,0,:,:]
 
     images_for_display = [image[:,0,:,:], noised_image[:,0,:,:], clean_image]
     titles = ["Original image", "Noised image", "Clean image"]

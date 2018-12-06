@@ -69,6 +69,12 @@ batch_size = 32
 
 log = open('log.txt', 'a') 
 
+log.write("--------------------------------------------------------------")
+log.write("Starting new network")
+log.write("Using images from {evalSetPath}")
+log.write("Number of Epochs: {epochs_num}, Batch size: {batch_size}")
+log.write()
+
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
 

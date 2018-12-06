@@ -126,7 +126,7 @@ for epoch in range(epochs_num):
             eval_img, _, eval_noised_img = eval_data
             eval_img, eval_noised_img = eval_img.to(device).unsqueeze(0), eval_noised_img.to(device).unsqueeze(0)
             cleaned_eval_img = model(eval_noised_img)
-            psnr_val = measure.compare_psnr(eval_img, cleaned_eval_img)
+            psnr_val = measure.compare_psnr(eval_img.detach().cpu().numpy(), cleaned_eval_img)
             log.write("psnr value for epoch {epoch} is {psnr_val}")
             print("psnr value for epoch {epoch} is {psnr_val}")  # %d is %.3f" #% (epoch, psnr_val))
 

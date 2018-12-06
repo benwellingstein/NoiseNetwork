@@ -64,7 +64,7 @@ trainRootPath = "/home/osherm/PycharmProjects/NoiseNetwork/train"
 evalSetPath = "/home/osherm/PycharmProjects/NoiseNetwork/test/BSD68/"
 
 noise_stddev = 25
-epochs_num = 50
+epochs_num = 1000
 batch_size = 32
 
 log = open('log.txt', 'a') 
@@ -82,8 +82,8 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 training_set = DnCnnDataset(trainRootPath, noise_stddev, training=True)
 training_generator = DataLoader(training_set, batch_size=batch_size, shuffle=True, num_workers=4,drop_last=True)
 
-eval_set = DnCnnDataset(evalSetPath, noise_stddev, training=False)
-eval_set_generator = DataLoader(eval_set,batch_size=batch_size, shuffle=1, num_workers=5)
+eval_set = DnCnnDataset(evalSetPath, noise_stddev, training=False, evaluate=False)
+eval_set_generator = DataLoader(eval_set,batch_size=batch_size, shuffle=False, drop_last=True)
 
 
 DnCnn_net = DnCNN(channels=batch_size, layers_num=10)
@@ -94,9 +94,11 @@ criterion = nn.MSELoss()
 # Move to GPU
 model = DnCnn_net.to(device)
 
-optimizer = optim.Adam(model.parameters(), lr=10e-3)
+optimizer = optim.Adam(model.parameters(), lr=10e-2)
 optim_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [int(0.1*epochs_num), int(0.9*epochs_num)], gamma=0.1)
 
+
+psnr_values = []
 for epoch in range(epochs_num):
     running_loss = 0.0
     optim_scheduler.step()
@@ -123,18 +125,36 @@ for epoch in range(epochs_num):
             print("[%d, %5d] loss: %.3f" % (epoch + 1, i+1, running_loss/10))
             running_loss = 0.0
 
-    if epoch%5==1:
+    if epoch%10==9:
         save_model(model, saveModelPath)
         # Sanity check - calculate PSNR
         # TODO: display/save images
         # TODO: log psnr values along iterations
+
+
+        # Calculate average PSNR for eval dataset
+        eval_psnr_sum = 0.0
         for j, eval_data in enumerate(eval_set_generator):
-            eval_img, _, eval_noised_img = eval_data
-            eval_img, eval_noised_img = eval_img.to(device).unsqueeze(0), eval_noised_img.to(device).unsqueeze(0)
-            cleaned_eval_img = model(eval_noised_img)
-            psnr_val = measure.compare_psnr(eval_img.detach().cpu().numpy(), cleaned_eval_img)
-            log.write(f"psnr value for epoch + {epoch} is {psnr_val}")
-            print(f"psnr value for epoch {epoch} is {psnr_val}") 
+            eval_img_batch, _, eval_noised_img_batch = eval_data
+            eval_img_batch, eval_noised_img_batch = eval_img_batch.to(device).unsqueeze(0), eval_noised_img_batch.to(device).unsqueeze(0)
+            cleaned_eval_img_batch = model(eval_noised_img_batch)
+
+            #Calculate average PSNR for the batch
+            batch_psnr_sum = 0.0
+            for sample_ind in range(batch_size):
+                eval_img = eval_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
+                eval_cleaned_img = cleaned_eval_img_batch.detach().cpu().numpy()[0,sample_ind,:,:]
+                psnr_val = measure.compare_psnr(eval_img, eval_cleaned_img)
+                eval_psnr_sum += psnr_val
+
+        avg_psnr = eval_psnr_sum / eval_set.__len__()
+        psnr_values.append(avg_psnr)
+        # average psnr sum over batch size
+        log.write(f"psnr value for epoch {epoch} is {avg_batch_psnr}")
+        print(f"average psnr is " + str(psnr_values                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ))
+        # print("psnr value for epoch {epoch} is {avg_batch_psnr}")  # %d is %.3f" #% (epoch, psnr_val))
+
+
 
 
 print("Finished training")

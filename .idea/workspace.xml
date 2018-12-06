@@ -4,6 +4,8 @@
     <list default="true" id="a6880f61-6e60-47c3-9674-e3060d6ab9e8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/NoiseNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/NoiseNetwork.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/model.pth" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NoiseNetwork.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="128" column="59" selection-start-line="128" selection-start-column="59" selection-end-line="128" selection-end-column="59" />
+            <state relative-caret-position="42">
+              <caret line="90" column="51" selection-start-line="90" selection-start-column="51" selection-end-line="90" selection-end-column="51" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -26,11 +28,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file:///usr/lib/python3/dist-packages/apport_python_hook.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="46" selection-start-line="46" selection-end-line="46" />
+            <state relative-caret-position="315">
+              <caret line="22" column="21" lean-forward="true" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -38,17 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/nn/modules/module.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="174">
+            <state relative-caret-position="7545">
               <caret line="510" selection-start-line="510" selection-end-line="510" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/optim/lr_scheduler.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -56,8 +49,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="57" column="72" selection-start-line="57" selection-start-column="72" selection-end-line="57" selection-end-column="72" />
+            <state relative-caret-position="350">
+              <caret line="50" column="39" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="39" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -66,18 +59,9 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/utils/data/dataloader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="58" selection-start-line="58" selection-end-line="58" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
+            <state relative-caret-position="195">
               <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
@@ -134,6 +118,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -145,7 +130,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -244,11 +228,6 @@
           <line>33</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/NoiseNetwork.py</url>
-          <line>128</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -303,13 +282,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/skimage/measure/simple_metrics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -317,21 +289,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/nn/modules/module.py">
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/skimage/measure/simple_metrics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="510" selection-start-line="510" selection-end-line="510" />
+        <state relative-caret-position="195">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models.py">
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/utils/data/dataloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-            <marker date="1542471442541" expanded="true" signature="60:65" ph="..." />
-          </folding>
+        <state relative-caret-position="675">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
         </state>
       </provider>
     </entry>
@@ -342,37 +310,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/utils/data/dataloader.py">
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/torch/nn/modules/module.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        <state relative-caret-position="7545">
+          <caret line="510" selection-start-line="510" selection-end-line="510" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+            <marker date="1542471442541" expanded="true" signature="60:65" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="57" column="72" selection-start-line="57" selection-start-column="72" selection-end-line="57" selection-end-column="72" />
+        <state relative-caret-position="350">
+          <caret line="50" column="39" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="39" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/lib/python3/dist-packages/apport_python_hook.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/NoiseNetwork.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="128" column="59" selection-start-line="128" selection-start-column="59" selection-end-line="128" selection-end-column="59" />
+        <state relative-caret-position="42">
+          <caret line="90" column="51" selection-start-line="90" selection-start-column="51" selection-end-line="90" selection-end-column="51" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python3/dist-packages/apport_python_hook.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="22" column="21" lean-forward="true" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
         </state>
       </provider>
     </entry>

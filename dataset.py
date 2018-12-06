@@ -27,7 +27,7 @@ def imshow(tensor, title=None):
 
 
 class DnCnnDataset(Dataset):
-    def __init__(self, root_dir, noise_stddev, training=True):
+    def __init__(self, root_dir, noise_stddev, training=True, evaluate=False):
         """
         Args:
             root_dir (string): Directory with all the images.
@@ -44,10 +44,17 @@ class DnCnnDataset(Dataset):
                 transforms.RandomVerticalFlip(),
                 transforms.ToTensor()])  # transform it into a torch tensor
 
+        elif evaluate:
+            #BSD68 is grayscale, no need to transform it
+            self.transform = transforms.Compose([
+                transforms.Resize((300, 300)),
+                transforms.ToTensor()])
+
         else:
             self.transform = transforms.Compose([
                 transforms.Grayscale(),
-                transforms.RandomCrop([80, 80]),
+                #transforms.RandomCrop([80, 80]),
+                transforms.Resize((300,300)),
                 transforms.ToTensor()])  # transform it into a torch tensor
 
         self.stddev = noise_stddev

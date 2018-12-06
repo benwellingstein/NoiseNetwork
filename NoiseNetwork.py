@@ -71,8 +71,8 @@ log = open('log.txt', 'a')
 
 log.write("--------------------------------------------------------------")
 log.write("Starting new network")
-log.write("Using images from {evalSetPath}")
-log.write("Number of Epochs: {epochs_num}, Batch size: {batch_size}")
+log.write(f"Using images from {evalSetPath}")
+log.write(f"Number of Epochs: {epochs_num}, Batch size: {batch_size}")
 log.write()
 
 use_cuda = torch.cuda.is_available()
@@ -133,8 +133,8 @@ for epoch in range(epochs_num):
             eval_img, eval_noised_img = eval_img.to(device).unsqueeze(0), eval_noised_img.to(device).unsqueeze(0)
             cleaned_eval_img = model(eval_noised_img)
             psnr_val = measure.compare_psnr(eval_img.detach().cpu().numpy(), cleaned_eval_img)
-            log.write("psnr value for epoch {epoch} is {psnr_val}")
-            print("psnr value for epoch {epoch} is {psnr_val}")  # %d is %.3f" #% (epoch, psnr_val))
+            log.write(f"psnr value for epoch + {epoch} is {psnr_val}")
+            print(f"psnr value for epoch {epoch} is {psnr_val}") 
 
 
 print("Finished training")

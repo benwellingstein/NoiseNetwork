@@ -67,6 +67,7 @@ noise_stddev = 25
 epochs_num = 50
 batch_size = 32
 
+log = open('log.txt', 'a') 
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
@@ -123,6 +124,9 @@ for epoch in range(epochs_num):
         eval_img, eval_noised_img = eval_img.to(device), eval_noised_img.to(device)
         cleaned_eval_img = model(eval_noised_img)
         psnr_val = measure.compare_psnr(eval_img, cleaned_eval_img)
+
+       	# logging 
+       	log.write("psnr value for epoch {epoch} is {psnr_val}")
         print("psnr value for epoch {epoch} is {psnr_val}")  # %d is %.3f" #% (epoch, psnr_val))
 
 print("Finished training")

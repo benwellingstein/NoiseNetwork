@@ -65,15 +65,14 @@ evalSetPath = "/home/osherm/PycharmProjects/NoiseNetwork/test/BSD68/"
 
 noise_stddev = 25
 epochs_num = 1000
-batch_size = 32
+batch_size = 64
 
 log = open('log.txt', 'a') 
 
 log.write("--------------------------------------------------------------")
 log.write("Starting new network")
-log.write(f"Using images from {evalSetPath}")
-log.write(f"Number of Epochs: {epochs_num}, Batch size: {batch_size}")
-log.write()
+log.write("Using images from {evalSetPath}")
+log.write("Number of Epochs: {epochs_num}, Batch size: {batch_size}")
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
@@ -150,11 +149,10 @@ for epoch in range(epochs_num):
         avg_psnr = eval_psnr_sum / eval_set.__len__()
         psnr_values.append(avg_psnr)
         # average psnr sum over batch size
-        log.write(f"psnr value for epoch {epoch} is {avg_batch_psnr}")
-        print(f"average psnr is " + str(psnr_values                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ))
+        log.write("psnr value for epoch {epoch} is {avg_psnr}")
+        #print("average psnr is " + str(avg_psnr))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ))
+
         # print("psnr value for epoch {epoch} is {avg_batch_psnr}")  # %d is %.3f" #% (epoch, psnr_val))
-
-
 
 
 print("Finished training")

@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a6880f61-6e60-47c3-9674-e3060d6ab9e8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/NoiseNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/NoiseNetwork.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/model.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainingEvals/img0_epoch19.png" beforeDir="false" afterPath="$PROJECT_DIR$/trainingEvals/img0_epoch19.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainingEvals/img0_epoch29.png" beforeDir="false" afterPath="$PROJECT_DIR$/trainingEvals/img0_epoch29.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainingEvals/img0_epoch39.png" beforeDir="false" afterPath="$PROJECT_DIR$/trainingEvals/img0_epoch39.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainingEvals/img0_epoch49.png" beforeDir="false" afterPath="$PROJECT_DIR$/trainingEvals/img0_epoch49.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainingEvals/img0_epoch9.png" beforeDir="false" afterPath="$PROJECT_DIR$/trainingEvals/img0_epoch9.png" afterDir="false" />
-    </list>
+    <list default="true" id="a6880f61-6e60-47c3-9674-e3060d6ab9e8" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +13,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/NoiseNetwork.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="452">
+            <state relative-caret-position="1640">
               <caret line="158" column="8" selection-start-line="158" selection-start-column="8" selection-end-line="158" selection-end-column="8" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
@@ -35,7 +25,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file:///usr/lib/python3/dist-packages/apport_python_hook.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
+            <state relative-caret-position="-645">
               <caret line="33" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
@@ -62,8 +52,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="69" column="13" selection-start-line="69" selection-start-column="13" selection-end-line="69" selection-end-column="13" />
+            <state relative-caret-position="606">
+              <caret line="67" selection-start-line="67" selection-end-line="67" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -212,7 +202,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="64" y="-11" width="1857" height="1092" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16593887" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -220,12 +209,12 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3291536" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39916405" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39916405" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3291536" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3291536" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.3291536" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.3291536" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -240,12 +229,6 @@
           <url>file:///usr/lib/python3/dist-packages/apport_python_hook.py</url>
           <line>33</line>
           <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <condition expression="self.root_dir == &quot;/home/osherm/PycharmProjects/NoiseNetwork/test/BSD68/&quot;" language="Python" />
-          <url>file://$PROJECT_DIR$/dataset.py</url>
-          <line>67</line>
-          <option name="timeStamp" value="28" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -383,15 +366,15 @@
     </entry>
     <entry file="file:///usr/lib/python3/dist-packages/apport_python_hook.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
+        <state relative-caret-position="-645">
           <caret line="33" selection-start-line="33" selection-end-line="33" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="69" column="13" selection-start-line="69" selection-start-column="13" selection-end-line="69" selection-end-column="13" />
+        <state relative-caret-position="606">
+          <caret line="67" selection-start-line="67" selection-end-line="67" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
@@ -400,7 +383,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/NoiseNetwork.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="452">
+        <state relative-caret-position="1640">
           <caret line="158" column="8" selection-start-line="158" selection-start-column="8" selection-end-line="158" selection-end-column="8" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
